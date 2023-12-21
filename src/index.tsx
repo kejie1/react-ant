@@ -2,7 +2,7 @@
  * @Author: ChuandongHuang chuandong_huang@human-horizons.com
  * @Date: 2023-12-20 16:29:35
  * @LastEditors: ChuandongHuang chuandong_huang@human-horizons.com
- * @LastEditTime: 2023-12-21 13:56:14
+ * @LastEditTime: 2023-12-21 17:02:08
  * @Description:
  */
 import React from "react";
@@ -12,6 +12,8 @@ import router from "./router";
 import { RouterProvider } from "react-router-dom";
 import { Provider } from "react-redux";
 import store from "@/store";
+// 样式初始化
+import 'normalize.css'
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
