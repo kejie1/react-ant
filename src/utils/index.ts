@@ -1,4 +1,4 @@
 // 中转导出
-import { request } from "http";
+import { request } from "./request";
 
 export {request}

@@ -2,25 +2,35 @@
  * @Author: ChuandongHuang chuandong_huang@human-horizons.com
  * @Date: 2023-12-21 09:44:05
  * @LastEditors: ChuandongHuang chuandong_huang@human-horizons.com
- * @LastEditTime: 2023-12-21 13:31:00
+ * @LastEditTime: 2023-12-21 16:16:54
  * @Description:
  */
 import React from "react";
-import { Card, Form, Input, Button } from "antd";
+import { Card, Form, Input, Button,message } from "antd";
 import "./index.scss";
+import { useDispatch } from 'react-redux'
+import {getUserToken} from '@/store/modules/user'
+import { LoginFrom } from '@/types/user'
+import {UnknownAction}from '@reduxjs/toolkit'
+import { useNavigate } from "react-router";
 
 export const Login: React.FC = () => {
-  const onFinish = (values: any) => {
-    console.log("Success:", values);
+  const dispatch = useDispatch()
+  const navigate = useNavigate()
+    // 获取form输入
+  const onFinish = async (values: LoginFrom) => {
+    await dispatch(getUserToken(values) as unknown as UnknownAction)
+    // 跳转主页
+    navigate('/index')
+    message.success('登录成功')
   };
 
   const onFinishFailed = (errorInfo: any) => {
     console.log("Failed:", errorInfo);
   };
   type FieldType = {
-    phone?: string;
-    password?: string;
-    remember?: string;
+    mobile?: string;
+    code?: string;
   };
   return (
     <div className="full-height flex justify-center items-center">
@@ -37,7 +47,7 @@ export const Login: React.FC = () => {
           autoComplete="off"
         >
           <Form.Item<FieldType>
-            name="phone"
+            name="mobile"
             rules={[
               { required: true, message: "请输入手机号" },
               {pattern:/^1[3-9]\d{9}$/,message:"手机号格式错误"} 
@@ -48,8 +58,8 @@ export const Login: React.FC = () => {
           </Form.Item>
 
           <Form.Item<FieldType>
-            name="password"
-            rules={[{ required: true, message: "请输入密码" }]}
+            name="code"
+            rules={[{ required: true, message: "请输入验证码" }]}
             validateTrigger="onBlur"
           >
             <Input.Password />
