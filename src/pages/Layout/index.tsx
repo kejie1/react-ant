@@ -2,7 +2,7 @@
  * @Author: ChuandongHuang chuandong_huang@human-horizons.com
  * @Date: 2023-12-20 17:10:26
  * @LastEditors: ChuandongHuang chuandong_huang@human-horizons.com
- * @LastEditTime: 2023-12-21 16:57:51
+ * @LastEditTime: 2023-12-22 11:24:45
  * @Description: 
  */
 import { Layout, Menu, Popconfirm, Button } from "antd";
@@ -13,20 +13,30 @@ import {
   FileWordOutlined,
   LogoutOutlined,
 } from "@ant-design/icons";
-import { Link } from "react-router-dom";
+import { Link, Outlet, useNavigate } from "react-router-dom";
 const { Header, Sider, Content } = Layout;
 
 const GeekLayout = () => {
+  // const items = [
+  //   { label: <Link to="/home">数据面板</Link>,key: "/home"},
+  //   { label: <Link to="/publish">创建文章</Link>,key: "/publish"},
+  //   { label: <Link to="/article">内容管理</Link>, key: "/article" },
+  // ]
   const items = [
-    { label: <Link to="/home/dashboard">数据面板</Link>,key: "/home/dashboard"},
-    { label: <Link to="/home/article">内容管理</Link>, key: "/home/article" },
-    { label: <Link to="/home/publish">发布文章</Link>, key: "/home/publish" },
+    { label:'数据面板' ,key: "/"},
+    { label: '创建文章',key: "/publish"},
+    { label:'内容管理', key: "/article" },
   ]
+  const navigate = useNavigate()
+  const onChangeRoute = (route:any)=>{
+    console.log(route)
+    navigate(route.key)
+  }
   return (
     <Layout className='geek-layout'>
       <Sider width={148}>
         <div className="logo">GEEK</div>
-        <Menu defaultSelectedKeys={['1']} mode="inline" theme="dark" items={items}></Menu>
+        <Menu defaultSelectedKeys={['1']} onClick={onChangeRoute} mode="inline" theme="dark" items={items}></Menu>
       </Sider>
       <Layout>
         <Header>
@@ -46,7 +56,7 @@ const GeekLayout = () => {
           </div>
         </Header>
         <Content>
-          内容
+          <Outlet></Outlet>
         </Content>
       </Layout>
     </Layout>
