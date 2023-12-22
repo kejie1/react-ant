@@ -2,7 +2,7 @@
  * @Author: ChuandongHuang chuandong_huang@human-horizons.com
  * @Date: 2023-12-20 17:10:26
  * @LastEditors: ChuandongHuang chuandong_huang@human-horizons.com
- * @LastEditTime: 2023-12-22 11:24:45
+ * @LastEditTime: 2023-12-22 17:12:59
  * @Description: 
  */
 import { Layout, Menu, Popconfirm, Button } from "antd";
@@ -13,36 +13,45 @@ import {
   FileWordOutlined,
   LogoutOutlined,
 } from "@ant-design/icons";
-import { Link, Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import { useEffect } from "react"
+import { useDispatch, useSelector } from "react-redux"
+import {UnknownAction}from '@reduxjs/toolkit'
+import {getUserInfo} from '@/store/modules/user'
+import { userInfo } from "os";
+
 const { Header, Sider, Content } = Layout;
 
 const GeekLayout = () => {
-  // const items = [
-  //   { label: <Link to="/home">数据面板</Link>,key: "/home"},
-  //   { label: <Link to="/publish">创建文章</Link>,key: "/publish"},
-  //   { label: <Link to="/article">内容管理</Link>, key: "/article" },
-  // ]
   const items = [
     { label:'数据面板' ,key: "/"},
     { label: '创建文章',key: "/publish"},
     { label:'内容管理', key: "/article" },
   ]
   const navigate = useNavigate()
+  // 修改路由
   const onChangeRoute = (route:any)=>{
-    console.log(route)
     navigate(route.key)
   }
+  // 当前的路由
+  const location = useLocation()
+  // 获取用户信息
+  const { useInfo } = useSelector((state:any)=>state.user)
+  const dispatch = useDispatch()
+    useEffect(()=>{
+        dispatch(getUserInfo() as unknown as UnknownAction)
+    },[dispatch])
   return (
     <Layout className='geek-layout'>
       <Sider width={148}>
         <div className="logo">GEEK</div>
-        <Menu defaultSelectedKeys={['1']} onClick={onChangeRoute} mode="inline" theme="dark" items={items}></Menu>
+        <Menu selectedKeys={[location.pathname]} onClick={onChangeRoute} mode="inline" theme="dark" items={items}></Menu>
       </Sider>
       <Layout>
         <Header>
           <span style={{ fontSize: 16 }}>极客园自媒体端</span>
           <div>
-            <span>111</span>
+            <span>{userInfo?.name}</span>
             <Popconfirm
               placement="bottomRight"
               title="您确认退出极客园自媒体端吗？"

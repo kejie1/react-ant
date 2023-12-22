@@ -2,7 +2,7 @@
  * @Author: ChuandongHuang chuandong_huang@human-horizons.com
  * @Date: 2023-12-21 09:44:05
  * @LastEditors: ChuandongHuang chuandong_huang@human-horizons.com
- * @LastEditTime: 2023-12-21 16:16:54
+ * @LastEditTime: 2023-12-22 17:10:57
  * @Description:
  */
 import React from "react";
@@ -21,7 +21,7 @@ export const Login: React.FC = () => {
   const onFinish = async (values: LoginFrom) => {
     await dispatch(getUserToken(values) as unknown as UnknownAction)
     // 跳转主页
-    navigate('/index')
+    navigate('/')
     message.success('登录成功')
   };
 
