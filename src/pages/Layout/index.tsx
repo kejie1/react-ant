@@ -2,7 +2,7 @@
  * @Author: ChuandongHuang chuandong_huang@human-horizons.com
  * @Date: 2023-12-20 17:10:26
  * @LastEditors: ChuandongHuang chuandong_huang@human-horizons.com
- * @LastEditTime: 2023-12-22 17:12:59
+ * @LastEditTime: 2023-12-25 09:54:55
  * @Description: 
  */
 import { Layout, Menu, Popconfirm, Button } from "antd";
@@ -18,7 +18,6 @@ import { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import {UnknownAction}from '@reduxjs/toolkit'
 import {getUserInfo} from '@/store/modules/user'
-import { userInfo } from "os";
 
 const { Header, Sider, Content } = Layout;
 
@@ -36,7 +35,7 @@ const GeekLayout = () => {
   // 当前的路由
   const location = useLocation()
   // 获取用户信息
-  const { useInfo } = useSelector((state:any)=>state.user)
+  const { userInfo } = useSelector((state:any)=>state.user)
   const dispatch = useDispatch()
     useEffect(()=>{
         dispatch(getUserInfo() as unknown as UnknownAction)
