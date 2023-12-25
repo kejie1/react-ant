@@ -2,11 +2,189 @@
  * @Author: ChuandongHuang chuandong_huang@human-horizons.com
  * @Date: 2023-12-22 11:09:43
  * @LastEditors: ChuandongHuang chuandong_huang@human-horizons.com
- * @LastEditTime: 2023-12-22 11:10:58
- * @Description: 
+ * @LastEditTime: 2023-12-25 18:14:56
+ * @Description:
  */
-export const Publish = ()=>{
-    return(
-        <>this is Publish</>
-    )
-}
+import { useState } from "react";
+import {
+  Button,
+  Radio,
+  Form,
+  Input,
+  Select,
+  message,
+  Upload,
+  Modal,
+} from "antd";
+// import {ChannelSelect} from './components/ChannelSelect'
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchChannels } from "@/store/modules/article";
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
+import "./index.scss";
+import { createArticleAPI } from "@/apis/article";
+import { PlusOutlined } from "@ant-design/icons";
+import type { RcFile, UploadProps } from "antd/es/upload";
+import type { UploadFile } from "antd/es/upload/interface";
+import type { RadioChangeEvent } from "antd";
+type FieldType = {
+  title: string;
+  content: string;
+  cover?: {
+    type: number;
+    images: Array<unknown>;
+  };
+  channel_id: number;
+};
+type ChannelType = {
+  id: number;
+  name: string;
+};
+const getBase64 = (file: RcFile): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = (error) => reject(error);
+  });
+const Publish = () => {
+  const dispatch = useDispatch();
+  const { channels } = useSelector((state: any) => state.article);
+  // 获取分类列表
+  useEffect(() => {
+    dispatch(fetchChannels() as unknown as any);
+  }, []);
+  const [currentRadio, setCurrentRadio] = useState(0);
+  // 处理单选按钮
+  const onRadioChange = (e: RadioChangeEvent) => {
+    setCurrentRadio(e.target.value);
+    setFileList([]);
+  };
+  //  创建文章
+  const onFinish = (values: FieldType) => {
+    const { channel_id, title, content } = values;
+    if(fileList.length !== currentRadio)return message.warning('请上传相匹配的图片数量')
+    const params = {
+      channel_id,
+      title,
+      content,
+      cover: {
+        type: currentRadio,
+        images: fileList.map(item=>item.response.data.url),
+      },
+    };
+    createArticleAPI(params).then((res) => {
+      if ((res.message = "OK")) {
+        message.success("创建成功");
+      }
+    });
+  };
+
+  const [previewOpen, setPreviewOpen] = useState(false);
+  const [previewImage, setPreviewImage] = useState("");
+  const [previewTitle, setPreviewTitle] = useState("");
+  const [fileList, setFileList] = useState<UploadFile[]>([]);
+  const handleCancel = () => setPreviewOpen(false);
+  // 查看大图
+  const handlePreview = async (file: UploadFile) => {
+    if (!file.url && !file.preview) {
+      file.preview = await getBase64(file.originFileObj as RcFile);
+    }
+
+    setPreviewImage(file.url || (file.preview as string));
+    setPreviewOpen(true);
+    setPreviewTitle(
+      file.name || file.url!.substring(file.url!.lastIndexOf("/") + 1)
+    );
+  };
+  // 获取上传成功的url
+  const handleChange: UploadProps["onChange"] = ({ file, fileList, event }) => {
+    setFileList(fileList);
+  };
+
+  const uploadButton = (
+    <div>
+      <PlusOutlined />
+      <div style={{ marginTop: 8 }}>Upload</div>
+    </div>
+  );
+  return (
+    <Form
+      name="basic"
+      labelCol={{ span: 8 }}
+      wrapperCol={{ span: 16 }}
+      style={{ maxWidth: 800 }}
+      onFinish={onFinish}
+      autoComplete="off"
+    >
+      <Form.Item<FieldType>
+        label="标题"
+        name="title"
+        validateTrigger="onBlur"
+        rules={[{ required: true, message: "请输入文章标题" }]}
+      >
+        <Input />
+      </Form.Item>
+      <Form.Item label="频道" name="channel_id">
+        <Select>
+          {channels?.map((item: ChannelType) => (
+            <Select.Option key={item.id} value={item.id}>
+              {item.name}
+            </Select.Option>
+          ))}
+        </Select>
+      </Form.Item>
+      <Form.Item label="封面" name="cover">
+        <Form.Item name="type">
+          <Radio.Group onChange={onRadioChange} value={currentRadio}>
+            <Radio value={1}>单图 </Radio>
+            <Radio value={3}>三图</Radio>
+            <Radio value={0}>无图</Radio>
+          </Radio.Group>
+        </Form.Item>
+      </Form.Item>
+      <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+        <Upload
+          name="image"
+          action="http://geek.itheima.net/v1_0/upload"
+          listType="picture-card"
+          fileList={fileList}
+          onPreview={handlePreview}
+          onChange={handleChange}
+        >
+          {fileList.length >= currentRadio ? null : uploadButton}
+        </Upload>
+        <Modal
+          open={previewOpen}
+          title={previewTitle}
+          footer={null}
+          onCancel={handleCancel}
+        >
+          <img alt="example" style={{ width: "100%" }} src={previewImage} />
+        </Modal>
+      </Form.Item>
+      <Form.Item<FieldType>
+        label="内容"
+        name="content"
+        validateTrigger="onBlur"
+        rules={[{ required: true, message: "请输入文章内容" }]}
+      >
+        <ReactQuill
+          className="ql-editor"
+          theme="snow"
+          placeholder="请输入文章内容"
+        ></ReactQuill>
+      </Form.Item>
+
+      <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
+        <Button type="primary" htmlType="submit">
+          Submit
+        </Button>
+        <Button htmlType="reset">reset</Button>
+      </Form.Item>
+    </Form>
+  );
+};
+
+export default Publish;
