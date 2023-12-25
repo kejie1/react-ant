@@ -2,7 +2,7 @@
  * @Author: ChuandongHuang chuandong_huang@human-horizons.com
  * @Date: 2023-12-20 16:29:35
  * @LastEditors: ChuandongHuang chuandong_huang@human-horizons.com
- * @LastEditTime: 2023-12-21 17:02:08
+ * @LastEditTime: 2023-12-25 09:56:05
  * @Description:
  */
 import React from "react";
@@ -18,9 +18,9 @@ const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 root.render(
-  <React.StrictMode>
+  // <React.StrictMode>
     <Provider store={store}>
       <RouterProvider router={router}></RouterProvider>
     </Provider>
-  </React.StrictMode>
+  // </React.StrictMode>
 );
