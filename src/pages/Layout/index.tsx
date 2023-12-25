@@ -2,10 +2,10 @@
  * @Author: ChuandongHuang chuandong_huang@human-horizons.com
  * @Date: 2023-12-20 17:10:26
  * @LastEditors: ChuandongHuang chuandong_huang@human-horizons.com
- * @LastEditTime: 2023-12-25 09:54:55
+ * @LastEditTime: 2023-12-25 10:44:08
  * @Description: 
  */
-import { Layout, Menu, Popconfirm, Button } from "antd";
+import { Layout, Menu, Popconfirm, Button, message } from "antd";
 import"./index.scss";
 import {
   PieChartOutlined,
@@ -17,7 +17,7 @@ import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { useEffect } from "react"
 import { useDispatch, useSelector } from "react-redux"
 import {UnknownAction}from '@reduxjs/toolkit'
-import {getUserInfo} from '@/store/modules/user'
+import {getUserInfo,clearUserInfo} from '@/store/modules/user'
 
 const { Header, Sider, Content } = Layout;
 
@@ -35,11 +35,17 @@ const GeekLayout = () => {
   // 当前的路由
   const location = useLocation()
   // 获取用户信息
-  const { userInfo } = useSelector((state:any)=>state.user)
+  const name= useSelector((state:any)=>state.user.userInfo.name)
   const dispatch = useDispatch()
     useEffect(()=>{
         dispatch(getUserInfo() as unknown as UnknownAction)
     },[dispatch])
+  // 退出登录
+  const handleLogout = ()=>{
+    dispatch(clearUserInfo())
+    message.success('退出成功')
+    navigate('/login')
+  }
   return (
     <Layout className='geek-layout'>
       <Sider width={148}>
@@ -50,12 +56,13 @@ const GeekLayout = () => {
         <Header>
           <span style={{ fontSize: 16 }}>极客园自媒体端</span>
           <div>
-            <span>{userInfo?.name}</span>
+            <span>{name}</span>
             <Popconfirm
               placement="bottomRight"
               title="您确认退出极客园自媒体端吗？"
               okText="确认"
               cancelText="取消"
+              onConfirm={handleLogout}
             >
               <Button type="link" icon={<LogoutOutlined />}>
                 退出

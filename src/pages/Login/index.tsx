@@ -2,7 +2,7 @@
  * @Author: ChuandongHuang chuandong_huang@human-horizons.com
  * @Date: 2023-12-21 09:44:05
  * @LastEditors: ChuandongHuang chuandong_huang@human-horizons.com
- * @LastEditTime: 2023-12-22 17:10:57
+ * @LastEditTime: 2023-12-25 11:22:06
  * @Description:
  */
 import React from "react";
@@ -12,7 +12,7 @@ import { useDispatch } from 'react-redux'
 import {getUserToken} from '@/store/modules/user'
 import { LoginFrom } from '@/types/user'
 import {UnknownAction}from '@reduxjs/toolkit'
-import { useNavigate } from "react-router";
+import { useNavigate } from "react-router-dom";
 
 export const Login: React.FC = () => {
   const dispatch = useDispatch()
