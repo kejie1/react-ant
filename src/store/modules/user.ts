@@ -2,11 +2,11 @@
  * @Author: ChuandongHuang chuandong_huang@human-horizons.com
  * @Date: 2023-12-21 13:48:17
  * @LastEditors: ChuandongHuang chuandong_huang@human-horizons.com
- * @LastEditTime: 2023-12-25 11:20:17
+ * @LastEditTime: 2023-12-26 14:37:15
  * @Description: 
  */
 import { createSlice,Dispatch } from '@reduxjs/toolkit'
-import { removeToken, request } from '@/utils/index'
+import { removeToken } from '@/utils/index'
 import { LoginFrom } from '@/types/user'
 import { setToken as _setToken,getToken } from '@/utils/index'
 import { loginAPI,getProfileAPI } from '@/apis/user'

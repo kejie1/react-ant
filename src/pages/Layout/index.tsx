@@ -2,15 +2,12 @@
  * @Author: ChuandongHuang chuandong_huang@human-horizons.com
  * @Date: 2023-12-20 17:10:26
  * @LastEditors: ChuandongHuang chuandong_huang@human-horizons.com
- * @LastEditTime: 2023-12-25 10:44:08
+ * @LastEditTime: 2023-12-26 14:40:07
  * @Description: 
  */
 import { Layout, Menu, Popconfirm, Button, message } from "antd";
 import"./index.scss";
 import {
-  PieChartOutlined,
-  SolutionOutlined,
-  FileWordOutlined,
   LogoutOutlined,
 } from "@ant-design/icons";
 import { Outlet, useLocation, useNavigate } from "react-router-dom";

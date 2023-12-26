@@ -2,7 +2,7 @@
  * @Author: ChuandongHuang chuandong_huang@human-horizons.com
  * @Date: 2023-12-22 11:01:58
  * @LastEditors: ChuandongHuang chuandong_huang@human-horizons.com
- * @LastEditTime: 2023-12-26 14:18:53
+ * @LastEditTime: 2023-12-26 14:40:16
  * @Description:
  */
 import {
@@ -13,13 +13,13 @@ import {
   Select,
   DatePicker,
   Tag,
-  Image,
+  // Image,
   Table,
   Card,
   Popconfirm
 } from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
-import defaultImg from "@/assets/error.png";
+// import defaultImg from "@/assets/error.png";
 import { useEffect, useState } from "react";
 import type { RadioChangeEvent } from "antd";
 import { getArticlesAPI,deleteArticleAPI } from "@/apis/article";

@@ -2,7 +2,7 @@
  * @Author: ChuandongHuang chuandong_huang@human-horizons.com
  * @Date: 2023-12-22 11:09:43
  * @LastEditors: ChuandongHuang chuandong_huang@human-horizons.com
- * @LastEditTime: 2023-12-26 14:16:28
+ * @LastEditTime: 2023-12-26 14:39:52
  * @Description:
  */
 import { useEffect, useState } from "react";
@@ -65,13 +65,13 @@ const Publish = () => {
     };
     if(articleId){
       console.log(params)
-      updateArticleAPI({...params,id:articleId}).then((res) => {
+      updateArticleAPI({...params,id:articleId}).then((res:any) => {
         if ((res.message = "OK")) {
           message.success("修改成功");
         }
       });
     }else{
-      createArticleAPI(params).then((res) => {
+      createArticleAPI(params).then((res:any) => {
         if ((res.message = "OK")) {
           message.success("创建成功");
         }

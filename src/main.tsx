@@ -2,10 +2,9 @@
  * @Author: ChuandongHuang chuandong_huang@human-horizons.com
  * @Date: 2023-12-20 16:29:35
  * @LastEditors: ChuandongHuang chuandong_huang@human-horizons.com
- * @LastEditTime: 2023-12-25 09:56:05
+ * @LastEditTime: 2023-12-26 14:40:24
  * @Description:
  */
-import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.scss";
 import router from "./router";
