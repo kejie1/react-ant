@@ -14,7 +14,7 @@ import { LoginFrom } from '@/types/user'
 import {UnknownAction}from '@reduxjs/toolkit'
 import { useNavigate } from "react-router-dom";
 
-export const Login: React.FC = () => {
+const Login: React.FC = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
     // 获取form输入
@@ -81,3 +81,4 @@ export const Login: React.FC = () => {
     </div>
   );
 };
+export default Login

@@ -7,8 +7,7 @@
  */
 import BarCharts from './components/BarCharts'
 
-export const Home = () => {
-  
+const Home = () => {
   return (
     <div>
       <BarCharts title={'三大框架满意度'} width={500} height={400}/>
@@ -16,3 +15,4 @@ export const Home = () => {
     </div>
   );
 };
+export default Home
