@@ -2,7 +2,7 @@
  * @Author: ChuandongHuang chuandong_huang@human-horizons.com
  * @Date: 2023-12-25 14:09:34
  * @LastEditors: ChuandongHuang chuandong_huang@human-horizons.com
- * @LastEditTime: 2023-12-25 18:27:32
+ * @LastEditTime: 2023-12-26 10:24:54
  * @Description: 
  */
 import { request } from "@/utils";
@@ -24,7 +24,7 @@ export const createArticleAPI = (data:any)=>{
 
 export const getArticles = (data:any)=>{
     return request({
-        url:'/channels',
+        url:'/mp/articles',
         method:'GET',
         data
     })
