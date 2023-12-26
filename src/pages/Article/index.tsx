@@ -2,19 +2,34 @@
  * @Author: ChuandongHuang chuandong_huang@human-horizons.com
  * @Date: 2023-12-22 11:01:58
  * @LastEditors: ChuandongHuang chuandong_huang@human-horizons.com
- * @LastEditTime: 2023-12-26 10:46:05
+ * @LastEditTime: 2023-12-26 14:18:53
  * @Description:
  */
-import { Button, Radio, Form, Space, Select,DatePicker,Tag, Image,Table, Card } from "antd";
+import {
+  Button,
+  Radio,
+  Form,
+  Space,
+  Select,
+  DatePicker,
+  Tag,
+  Image,
+  Table,
+  Card,
+  Popconfirm
+} from "antd";
 import { EditOutlined, DeleteOutlined } from "@ant-design/icons";
 import defaultImg from "@/assets/error.png";
 import { useEffect, useState } from "react";
 import type { RadioChangeEvent } from "antd";
-import { getArticles } from "@/apis/article";
+import { getArticlesAPI,deleteArticleAPI } from "@/apis/article";
 import { useChannel } from "@/hooks/useChannel";
 import { ChannelType } from "@/types/article";
-import locale from 'antd/es/date-picker/locale/zh_CN';
-import 'dayjs/locale/zh-cn';
+import locale from "antd/es/date-picker/locale/zh_CN";
+import type { ColumnsType } from "antd/es/table";
+import { DataType, FieldType,ArticleList } from "@/types/article";
+import "dayjs/locale/zh-cn";
+import { useNavigate } from "react-router-dom";
 const { RangePicker } = DatePicker;
 //   参数名称	是否必须	示例	备注
 //   status	否		文章状态，0-草稿，1-待审核，2-审核通过，3-审核失败，不传为全部
@@ -24,35 +39,19 @@ const { RangePicker } = DatePicker;
 //   page	否		页码 默认为1页
 //   per_page否		每页数量 不传为默认10
 
-type FieldType = {
-  status?: number;
-  channel_id: number;
-  begin_pubdate?: string;
-  end_pubdate?: string;
-  page?: number;
-  per_page?: number;
-  datepicker?:any
-};
-export const Article = () => {
+const Article = () => {
   const statusLabel = [
     { text: "草稿", color: "default" },
     { text: "待审核", color: "blue" },
     { text: "审核通过", color: "green" },
     { text: "审核拒绝", color: "red" },
   ];
-  const columns = [
+  const columns: ColumnsType<DataType> = [
     {
       title: "封面",
       dataIndex: "cover",
       key: "cover",
-      render: (cover) => (
-        <Image
-          src={cover?.images?.[0] || defaultImg}
-          style={{ objectFit: "cover" }}
-          width={200}
-          height={120}
-        />
-      ),
+      render: () => "自定义封面",
     },
     {
       title: "标题",
@@ -63,10 +62,9 @@ export const Article = () => {
       title: "状态",
       dataIndex: "status",
       key: "status",
-      render: (status) => {
-        const info = statusLabel[status];
-        return <Tag color={info.color}>{info.text}</Tag>;
-      },
+      render: (data) => (
+        <Tag color={statusLabel[data].color}>{statusLabel[data].text}</Tag>
+      ),
     },
     {
       title: "发布时间",
@@ -91,39 +89,68 @@ export const Article = () => {
     {
       title: "操作",
       key: "action",
-      render: () => (
+      render: (data:ArticleList) => (
         <Space size="middle">
-          <Button type="link" icon={<EditOutlined />} />
+          <Button type="link" icon={<EditOutlined />} onClick={()=>navigate(`/publish?id=${data.id}`)} />
+            <Popconfirm
+            placement="bottomRight"
+            title="删除文章"
+            description="您确认删除该条数据吗？"
+            okText="确认"
+            cancelText="取消"
+            onConfirm={()=>{onDeleteChange(data.id)}}
+          >
           <Button type="link" icon={<DeleteOutlined />} />
+          </Popconfirm>
         </Space>
       ),
     },
   ];
-  const dateFormat = 'YYYY/MM/DD';
+  const navigate = useNavigate()
+  const dateFormat = "YYYY/MM/DD";
   const { channels } = useChannel();
   const [currentRadio, setCurrentRadio] = useState(0);
   const [articleList, setArticleList] = useState([]);
-  const [count,setCount] = useState(0)
-  const fetchArticles = (values?:FieldType)=>{
-    getArticles(values).then((res) => {
-      setCount(res.data.total_count)
+  const [count, setCount] = useState(0);
+  const [reqData, setReqData] = useState<FieldType>({
+    page: 1,
+    per_page: 2,
+  });
+  const fetchArticles = (values?: FieldType) => {
+    getArticlesAPI(values).then((res) => {
+      setCount(res.data.total_count);
       setArticleList(res.data.results);
     });
-  }
-  useEffect(()=>{
-    fetchArticles()
-  },[])
-  const onFinish = (value: FieldType) => {
-    const {channel_id,datepicker,status} = value
-    const params = {
-      channel_id,
-      status:status || 0
-    }
-    fetchArticles(params)
+    
   };
+  const onPaginationChange = (page:number)=>{
+    setReqData({
+      ...reqData,
+      page 
+    })
+  }
+  useEffect(() => {
+    fetchArticles(reqData);
+  }, [reqData]);
+  // 获取表单数据
+  const onFinish = (value: FieldType) => {
+    setReqData({
+      ...reqData,
+      channel_id: value.channel_id,
+      status: value.status,
+      begin_pubdate: value.datepicker[0].format("YYYY-MM-DD") || "",
+      end_pubdate: value.datepicker[1].format("YYYY-MM-DD") || "",
+    });
+  };
+  // 选着状态
   const onRadioChange = (e: RadioChangeEvent) => {
     setCurrentRadio(e.target.value);
   };
+  // 删除数据
+  const onDeleteChange = async (id:string)=>{
+    await deleteArticleAPI(id)
+    setReqData({...reqData})
+  }
   return (
     <div>
       <Form
@@ -135,35 +162,40 @@ export const Article = () => {
         autoComplete="off"
       >
         <Form.Item label="状态" name="status">
-            <Radio.Group onChange={onRadioChange} value={currentRadio}>
-              <Radio value={0}>草稿</Radio>
-              <Radio value={1}>待审核</Radio>
-              <Radio value={2}>审核通过</Radio>
-              <Radio value={3}>审核失败</Radio>
-            </Radio.Group>
-          </Form.Item>
-          <Form.Item label="频道" name="channel_id">
-            <Select>
-              {channels?.map((item: ChannelType) => (
-                <Select.Option key={item.id} value={item.id}>
-                  {item.name}
-                </Select.Option>
-              ))}
-            </Select>
-          </Form.Item>
-          <Form.Item label="日期" name="datepicker">
-            <RangePicker locale={locale} format={dateFormat}/>
-          </Form.Item>
+          <Radio.Group onChange={onRadioChange} value={currentRadio}>
+            <Radio value={0}>草稿</Radio>
+            <Radio value={1}>待审核</Radio>
+            <Radio value={2}>审核通过</Radio>
+            <Radio value={3}>审核失败</Radio>
+          </Radio.Group>
+        </Form.Item>
+        <Form.Item label="频道" name="channel_id">
+          <Select>
+            {channels?.map((item: ChannelType) => (
+              <Select.Option key={item.id} value={item.id}>
+                {item.name}
+              </Select.Option>
+            ))}
+          </Select>
+        </Form.Item>
+        <Form.Item label="日期" name="datepicker">
+          <RangePicker locale={locale} format={dateFormat} />
+        </Form.Item>
         <Form.Item wrapperCol={{ offset: 8, span: 16 }}>
-          <Button type="primary" htmlType="submit">
-            Submit
+          <Button size="small" type="primary" htmlType="submit">
+            Search
           </Button>
-          <Button htmlType="reset">reset</Button>
+          <Button size="small" htmlType="reset">
+            clear
+          </Button>
         </Form.Item>
       </Form>
       <Card title={`查询到${count}条结果`}>
-        <Table rowKey="id" columns={columns} dataSource={articleList} />;
+        <Table rowKey="id" columns={columns} dataSource={articleList} pagination={{total:count,pageSize:reqData.per_page,onChange:onPaginationChange}} />;
       </Card>
     </div>
   );
 };
+
+
+export default Article
